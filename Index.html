@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLESTRIDE - Footwear Android App Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            900: '#7c2d12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for mobile frame feel */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .android-frame {
+            box-shadow: 0 0 50px rgba(249, 115, 22, 0.15), 0 20px 40px -15px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-0 sm:p-6 overflow-x-hidden">
+
+    <!-- Desktop Pitch Banner / Controls -->
+    <div class="fixed top-4 left-4 right-4 z-50 hidden lg:flex items-center justify-between bg-slate-900/90 backdrop-blur-md border border-slate-800 px-6 py-3 rounded-2xl shadow-xl">
+        <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-sm font-semibold text-slate-200">Android App Demo Preview — Footwear Brand</span>
+            <span class="text-xs bg-slate-800 text-brand-500 px-2.5 py-1 rounded-lg border border-brand-500/20 font-mono">Client Pitch Mode</span>
+        </div>
+        <div class="flex items-center space-x-4 text-xs text-slate-400">
+            <span><i class="fa-solid fa-bolt text-brand-500 mr-1.5"></i> Lightweight Native Feel</span>
+            <span><i class="fa-brands fa-whatsapp text-emerald-500 mr-1.5"></i> Live Direct WhatsApp Enquiry</span>
+            <span><i class="fa-solid fa-mobile-screen text-indigo-400 mr-1.5"></i> Mobile Optimized</span>
+        </div>
+    </div>
+
+    <!-- Main Outer Container / Android Frame -->
+    <div class="w-full max-w-[430px] h-[100vh] sm:h-[880px] bg-slate-900 sm:rounded-[48px] border-0 sm:border-[10px] border-slate-800 android-frame flex flex-col relative overflow-hidden transition-all">
+
+        <!-- Android Status Bar -->
+        <div class="bg-slate-900 text-slate-300 px-6 pt-3 pb-1 flex justify-between items-center text-xs select-none shrink-0 z-40">
+            <span id="android-clock" class="font-semibold tracking-wide">09:41</span>
+            <!-- Android Camera Notch / Hole Punch -->
+            <div class="w-4 h-4 bg-black rounded-full border border-slate-800"></div>
+            <div class="flex items-center space-x-2 text-[10px]">
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-battery-three-quarters text-sm"></i>
+            </div>
+        </div>
+
+        <!-- App Header Bar -->
+        <header class="bg-slate-900/90 backdrop-blur-md px-5 py-3 border-b border-slate-800 flex items-center justify-between shrink-0 z-30">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-shoe-prints text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg text-white tracking-tight leading-none">SOLE<span class="text-brand-500">STRIDE</span></h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-wider uppercase">Premium Footwear</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleFavoritesModal()" class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700/60 flex items-center justify-center text-slate-300 hover:text-white transition">
+                    <i class="fa-regular fa-heart text-sm"></i>
+                </button>
+                <button onclick="openEnquiryModal()" class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center relative hover:bg-emerald-500/20 transition">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search & Filter Controls -->
+        <div class="px-5 pt-4 pb-2 bg-slate-900 shrink-0 z-20 space-y-3">
+            <!-- Search Bar -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search shoes, sneakers, loafers..." 
+                    class="w-full bg-slate-800/90 border border-slate-700/70 rounded-2xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition shadow-inner">
+            </div>
+
+            <!-- Categories Horizontal Scroll -->
+            <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1">
+                <button onclick="setCategory('all')" id="cat-all" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-brand-500 text-white shadow-md shadow-brand-500/20">All Shoes</button>
+                <button onclick="setCategory('sneakers')" id="cat-sneakers" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">Sneakers</button>
+                <button onclick="setCategory('sports')" id="cat-sports" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">Sports & Running</button>
+                <button onclick="setCategory('formals')" id="cat-formals" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">Formals & Loafers</button>
+            </div>
+        </div>
+
+        <!-- Scrollable Main App Content -->
+        <main class="flex-1 overflow-y-auto no-scrollbar p-5 space-y-5 bg-slate-950">
+            <!-- Promo Banner -->
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-brand-600 via-amber-600 to-slate-900 p-5 shadow-xl border border-brand-500/30">
+                <div class="relative z-10 max-w-[65%]">
+                    <span class="inline-block px-2.5 py-0.5 rounded-md bg-black/30 backdrop-blur-md text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-2">New Season Drop</span>
+                    <h2 class="text-xl font-extrabold text-white leading-tight">UP TO 40% OFF</h2>
+                    <p class="text-xs text-slate-200 mt-1">Lightweight performance sneakers designed for modern comfort.</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" alt="Featured Sneaker" class="absolute -right-6 -bottom-6 w-44 h-44 object-contain rotate-[-15deg] drop-shadow-2xl">
+            </div>
+
+            <!-- Product Grid Header -->
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-200 tracking-wide uppercase flex items-center gap-2">
+                    <span>Catalog</span>
+                    <span id="product-count" class="text-[10px] bg-slate-800 text-brand-500 px-2 py-0.5 rounded-full">6 items</span>
+                </h3>
+                <span class="text-xs text-slate-400">Sort: <strong class="text-slate-200 font-medium">Popular</strong></span>
+            </div>
+
+            <!-- Footwear Product Grid -->
+            <div id="productGrid" class="grid grid-cols-2 gap-3.5">
+                <!-- Javascript will render products here -->
+            </div>
+        </main>
+
+        <!-- Product Detail Drawer / Modal -->
+        <div id="productModal" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex-col justify-end transition-all duration-300">
+            <div class="bg-slate-900 border-t border-slate-700 rounded-t-[32px] p-6 max-h-[85%] overflow-y-auto no-scrollbar relative animate-slide-up">
+                <button onclick="closeProductModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                
+                <div class="w-12 h-1 bg-slate-700 rounded-full mx-auto mb-4 opacity-50"></div>
+                
+                <!-- Detail Content -->
+                <div id="modalContent">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Direct WhatsApp Enquiry Form Modal -->
+        <div id="enquiryModal" class="absolute inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex-col justify-end transition-all">
+            <div class="bg-slate-900 border-t border-slate-700 rounded-t-[32px] p-6 relative">
+                <button onclick="closeEnquiryModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                        <i class="fa-brands fa-whatsapp text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Quick WhatsApp Order</h3>
+                        <p class="text-xs text-slate-400">Direct order booking & size check</p>
+                    </div>
+                </div>
+
+                <form id="whatsappForm" onsubmit="sendWhatsAppOrder(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Your Full Name</label>
+                        <input type="text" id="custName" required placeholder="e.g. Rahul Sharma" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Mobile Number</label>
+                            <input type="tel" id="custPhone" required placeholder="9876543210" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Shoe Size (UK)</label>
+                            <select id="custSize" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                <option value="UK 7">UK 7</option>
+                                <option value="UK 8" selected>UK 8</option>
+                                <option value="UK 9">UK 9</option>
+                                <option value="UK 10">UK 10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Selected Model</label>
+                        <input type="text" id="custShoe" readonly class="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-3.5 py-2 text-xs text-brand-500 font-semibold cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Delivery Pincode</label>
+                        <input type="text" id="custPincode" placeholder="e.g. 110001" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 text-xs tracking-wide transition mt-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>SEND ENQUIRY ON WHATSAPP</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Android Bottom Navigation Bar -->
+        <nav class="bg-slate-900 border-t border-slate-800 px-6 py-2.5 flex justify-between items-center text-slate-400 text-xs shrink-0 z-30">
+            <button onclick="setCategory('all')" class="flex flex-col items-center space-y-1 text-brand-500">
+                <i class="fa-solid fa-house text-base"></i>
+                <span class="text-[10px] font-semibold">Store</span>
+            </button>
+            <button onclick="filterProducts('sneakers')" class="flex flex-col items-center space-y-1 hover:text-white transition">
+                <i class="fa-solid fa-fire text-base"></i>
+                <span class="text-[10px]">Trending</span>
+            </button>
+            <button onclick="openEnquiryModal()" class="flex flex-col items-center space-y-1 hover:text-white transition">
+                <i class="fa-solid fa-bag-shopping text-base"></i>
+                <span class="text-[10px]">Orders</span>
+            </button>
+            <button onclick="alert('Profile authentication module ready for integration!')" class="flex flex-col items-center space-y-1 hover:text-white transition">
+                <i class="fa-regular fa-user text-base"></i>
+                <span class="text-[10px]">Account</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- JavaScript App Logic -->
+    <script>
+        // Sample Products Database
+        const products = [
+            {
+                id: 1,
+                name: "Apex Velocity Pro",
+                category: "sneakers",
+                price: 2499,
+                originalPrice: 3999,
+                rating: 4.8,
+                reviews: 124,
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80",
+                badge: "Bestseller",
+                description: "Lightweight breathable mesh upper with responsive cushion midsole. Engineered for urban running and daily comfort."
+            },
+            {
+                id: 2,
+                name: "Street Vibe High-Tops",
+                category: "sneakers",
+                price: 2999,
+                originalPrice: 4499,
+                rating: 4.9,
+                reviews: 89,
+                image: "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=500&q=80",
+                badge: "Hot Drop",
+                description: "Retro streetwear design featuring premium synthetic leather detailing and durable rubber outsole grip."
+            },
+            {
+                id: 3,
+                name: "Monark Classic Loafers",
+                category: "formals",
+                price: 3299,
+                originalPrice: 4999,
+                rating: 4.7,
+                reviews: 64,
+                image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=500&q=80",
+                badge: "Handcrafted",
+                description: "Handstitched Genuine Leather slip-ons. Premium memory foam footbed for maximum office all-day comfort."
+            },
+            {
+                id: 4,
+                name: "Turbo Run X Sports",
+                category: "sports",
+                price: 1899,
+                originalPrice: 2999,
+                rating: 4.6,
+                reviews: 210,
+                image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=500&q=80",
+                badge: "Popular",
+                description: "Shock-absorbing athletic sole unit built for gym workouts, outdoor jogging, and intense movement."
+            },
+            {
+                id: 5,
+                name: "Urban Glide Canvas",
+                category: "sneakers",
+                price: 1499,
+                originalPrice: 2299,
+                rating: 4.5,
+                reviews: 43,
+                image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=500&q=80",
+                badge: "Budget Pick",
+                description: "Minimalist minimalist canvas casual shoes. Flexible grip for daily commute and relaxed weekends."
+            },
+            {
+                id: 6,
+                name: "Royale Oxford Formal",
+                category: "formals",
+                price: 3799,
+                originalPrice: 5499,
+                rating: 4.9,
+                reviews: 152,
+                image: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&w=500&q=80",
+                badge: "Premium",
+                description: "Sharp formal oxfords designed with polished sheen finish. Perfect choice for corporate & wedding outfits."
+            }
+        ];
+
+        let selectedProduct = products[0];
+        let currentCategory = 'all';
+
+        // Initialize Render
+        window.onload = function() {
+            renderProducts(products);
+            updateClock();
+            setInterval(updateClock, 30000);
+        };
+
+        // Realtime Clock Update
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('android-clock').innerText = `${hours}:${minutes}`;
+        }
+
+        // Render Grid
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            const countEl = document.getElementById('product-count');
+            countEl.innerText = `${items.length} items`;
+
+            if(items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-2 py-10 text-center text-slate-500 space-y-2">
+                        <i class="fa-solid fa-shoe-prints text-3xl opacity-30"></i>
+                        <p class="text-xs">No shoes found matching your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = items.map(item => `
+                <div onclick="openProductModal(${item.id})" class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden p-3 relative group hover:border-brand-500/50 transition cursor-pointer flex flex-col justify-between">
+                    ${item.badge ? `<span class="absolute top-2 left-2 z-10 text-[9px] font-extrabold bg-brand-500 text-white px-2 py-0.5 rounded-md shadow">${item.badge}</span>` : ''}
+                    
+                    <div class="h-32 w-full flex items-center justify-center my-1 relative overflow-hidden rounded-xl bg-slate-950/60">
+                        <img src="${item.image}" alt="${item.name}" class="max-h-28 object-contain transition duration-300 group-hover:scale-105">
+                    </div>
+
+                    <div class="space-y-1 pt-2 border-t border-slate-800/80">
+                        <div class="flex items-center space-x-1 text-[10px] text-amber-400 font-semibold">
+                            <i class="fa-solid fa-star text-[9px]"></i>
+                            <span>${item.rating}</span>
+                            <span class="text-slate-500 font-normal">(${item.reviews})</span>
+                        </div>
+                        <h4 class="font-bold text-xs text-white truncate leading-tight">${item.name}</h4>
+                        <div class="flex items-baseline justify-between pt-1">
+                            <div>
+                                <span class="font-extrabold text-xs text-brand-500">?${item.price}</span>
+                                <span class="text-[10px] text-slate-500 line-through ml-1">?${item.originalPrice}</span>
+                            </div>
+                            <button class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center text-xs group-hover:bg-brand-500 group-hover:text-white transition">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Category Filter
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = "cat-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-400 border border-slate-700 hover:text-white";
+            });
+            
+            const activeBtn = document.getElementById(`cat-${cat}`);
+            if(activeBtn) {
+                activeBtn.className = "cat-btn px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-brand-500 text-white shadow-md shadow-brand-500/20";
+            }
+
+            filterProducts();
+        }
+
+        // Search + Filter Handler
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => {
+                const matchesCat = (currentCategory === 'all' || p.category === currentCategory);
+                const matchesSearch = p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
+                return matchesCat && matchesSearch;
+            });
+            renderProducts(filtered);
+        }
+
+        // Product Modal Drawer
+        function openProductModal(id) {
+            selectedProduct = products.find(p => p.id === id);
+            const modal = document.getElementById('productModal');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = `
+                <div class="flex justify-center mb-4 relative bg-slate-950/80 rounded-2xl p-4 border border-slate-800">
+                    <img src="${selectedProduct.image}" class="h-44 object-contain drop-shadow-xl" alt="${selectedProduct.name}">
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-brand-500 uppercase tracking-widest">${selectedProduct.category}</span>
+                            <h2 class="text-lg font-bold text-white leading-snug">${selectedProduct.name}</h2>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-lg font-extrabold text-brand-500">?${selectedProduct.price}</span>
+                            <p class="text-[10px] text-slate-500 line-through">M.R.P: ?${selectedProduct.originalPrice}</p>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-400 leading-relaxed">${selectedProduct.description}</p>
+
+                    <!-- Shoe Size Picker -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-2">Select Size (UK)</label>
+                        <div class="flex space-x-2">
+                            ${['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'].map((size, idx) => `
+                                <button onclick="selectModalSize('${size}', this)" class="size-opt flex-1 py-2 rounded-xl text-xs font-bold border ${idx === 2 ? 'bg-brand-500 text-white border-brand-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-slate-500'} transition">
+                                    ${size}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="pt-3 grid grid-cols-2 gap-3">
+                        <button onclick="openEnquiryModal('${selectedProduct.name}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-lg shadow-emerald-600/20">
+                            <i class="fa-brands fa-whatsapp text-base"></i>
+                            <span>WhatsApp Buy</span>
+                        </button>
+                        <button onclick="alert('Item added to cart bag!')" class="bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                            <span>Add to Cart</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        let chosenSize = 'UK 8';
+        function selectModalSize(size, el) {
+            chosenSize = size;
+            document.querySelectorAll('.size-opt').forEach(btn => {
+                btn.className = "size-opt flex-1 py-2 rounded-xl text-xs font-bold border bg-slate-800 text-slate-300 border-slate-700 hover:border-slate-500 transition";
+            });
+            el.className = "size-opt flex-1 py-2 rounded-xl text-xs font-bold border bg-brand-500 text-white border-brand-500 transition";
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // WhatsApp Modal Trigger
+        function openEnquiryModal(shoeName) {
+            closeProductModal();
+            const modal = document.getElementById('enquiryModal');
+            document.getElementById('custShoe').value = shoeName || selectedProduct.name || 'Apex Velocity Pro';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEnquiryModal() {
+            const modal = document.getElementById('enquiryModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Process Direct WhatsApp Order
+        function sendWhatsAppOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const size = document.getElementById('custSize').value || chosenSize;
+            const shoe = document.getElementById('custShoe').value;
+            const pincode = document.getElementById('custPincode').value;
+
+            const textMessage = `Hello Footwear Team! ??%0A%0AI want to enquire / order the following footwear item:%0A%0A?? *Model:* ${encodeURIComponent(shoe)}%0A?? *Size:* ${encodeURIComponent(size)}%0A?? *Customer Name:* ${encodeURIComponent(name)}%0A?? *Contact:* ${encodeURIComponent(phone)}%0A?? *Pincode:* ${encodeURIComponent(pincode || 'N/A')}%0A%0APlease share delivery timeframe and payment details!`;
+
+            // Target footwear store business WhatsApp number (or placeholder for client demo)
+            const targetPhone = "919818192575"; 
+            window.open(`https://wa.me/${targetPhone}?text=${textMessage}`, '_blank');
+
+            closeEnquiryModal();
+        }
+
+        function toggleFavoritesModal() {
+            alert('Wishlist feature integrated! Saved items appear in customer favorites.');
+        }
+    </script>
+</body>
+</html>
